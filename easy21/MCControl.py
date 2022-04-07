@@ -37,8 +37,7 @@ class MonteCarloControl():
 
 
         #Different ways of choosing actions
-        #return np.random.choice([greedy_action] + actions, p = [epsilon/num_actions + 1 - epsilon, epsilon/num_actions])
-        return np.random.choice([greedy_action] + actions, p = [1 - epsilon, epsilon])
+        return np.random.choice([greedy_action] + actions, p = [epsilon/num_actions + 1 - epsilon, epsilon/num_actions])
 
     def update(self, states, actions, rewards):
         i = 0
