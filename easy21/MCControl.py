@@ -8,7 +8,6 @@ class MonteCarloControl():
     '''
 
     def __init__(self, env, N_0):
-        self.value_function = 0
         self.N_0 = N_0
         self.N_s = np.zeros((11,22))
         self.env = env
@@ -47,7 +46,7 @@ class MonteCarloControl():
             self.N_sa[action][state[0],state[1]] = self.get_state_action_count(state, action) + 1
             self.N_s[state[0],state[1]] = self.get_state_count(state) + 1
             self.Q_sa[action][state[0],state[1]] = self.get_state_action_value(state, action) \
-                                                    + (1/self.get_state_count(state)) \
+                                                    + (1/self.get_state_action_count(state, action)) \
                                                     * (sum(rewards[i:]) - self.get_state_action_value(state, action))
             i += 1
 
