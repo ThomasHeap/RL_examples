@@ -23,10 +23,10 @@ class Policy(nn.Module):
 
 
 
-def REINFORCE(alpha=0.01, gamma=0.99, num_episodes=100, episode_length=10000, learning_rate=1e-2, render=True):
-    env = gym.make('MountainCar-v0')
+def REINFORCE(alpha=0.01, gamma=0.99, num_episodes=100, episode_length=100000, learning_rate=1e-2, render=True):
+    env = gym.make('CartPole-v1')
 
-    def select_action(state):
+    def select_action(states):
         probs = policy(state)
         m = Categorical(probs)
         action = m.sample()
@@ -51,22 +51,25 @@ def REINFORCE(alpha=0.01, gamma=0.99, num_episodes=100, episode_length=10000, le
         policy_loss.backward()
         optimizer.step()
 
-    policy = Policy(2, 3)
+    policy = Policy(4, 2)
     optimizer = optim.Adam(policy.parameters(), lr=1e-2)
 
-    running_reward = -1000
+    running_reward = 10
 
     for episode in range(num_episodes):
         rewards = []
         log_probs = []
+        states = []
         state = env.reset()
         state = torch.tensor(state)
+        states.append(state)
         ep_reward = -1
         for t in range(1,episode_length):
-            action, lp = select_action(state)
+            action, lp = select_action(states)
             log_probs.append(lp)
             state, reward, done, _ = env.step(action)
             state=torch.tensor(state)
+            states.append(state)
             rewards.append(reward)
             ep_reward += reward
             if render:
@@ -77,13 +80,9 @@ def REINFORCE(alpha=0.01, gamma=0.99, num_episodes=100, episode_length=10000, le
         running_reward = 0.05 * ep_reward + (1 - 0.05) * running_reward
         finish_episode(rewards,log_probs)
 
-        if episode % 3 == 0:
-            print('Episode {}\tLast reward: {:.2f}\tAverage reward: {:.2f}'.format(
-                  episode, ep_reward, running_reward))
-        if running_reward > env.spec.reward_threshold:
-            print("Solved! Running reward is now {} and "
-                  "the last episode runs to {} time steps!".format(running_reward, t))
-            break
+        print('Episode {}\tLast reward: {:.2f}\tAverage reward: {:.2f}'.format(
+              episode, ep_reward, running_reward))
+
 
 
 if __name__ == '__main__':
