@@ -38,7 +38,7 @@ class SarsaLFAControl():
         actions = self.env.get_possible_actions()
         for i in range(1,22):
             for j in range(1,11):
-                for a in range(0,2):
+                for a in range(0,len(actions)):
                     allFeatures[i-1, j-1, a] = self.features([i,j],actions[a])
 
 
